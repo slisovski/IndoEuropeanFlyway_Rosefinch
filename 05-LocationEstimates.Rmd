@@ -1,0 +1,11 @@
+# Location Estimates{#locs}
+
+The table below provides location estimates for stationary sites in decimal degrees. The column “Stay” indicates the number of days spend at the location. Type indicated the seasonal category; B = Breeding site, AM = Autumn migration, WS = Wintering site, NM = Northward migration. Median location estimates (50% quantiles) are given - credibility intervals will be provided in supplementary material.
+
+```{r, echo = F}
+tab2 <- read.csv("C:/Users/SLi/Documents/GitHub/IndoEuropeanFlyway_Rosefinch/data/SummaryLocations.csv", header = T, sep = ",")
+names(tab2)[1] <- "Site"
+# head(tab2)
+DT::datatable(tab2, )
+```
+

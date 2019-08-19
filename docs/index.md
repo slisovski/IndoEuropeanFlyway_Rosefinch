@@ -12,12 +12,10 @@ github-repo: slisovski/IndoEuropeanFlyway_Rosefinch
 description: "Rosefinch migration - supplementary online material"
 ---
 
-# {-}
+# Preface {-}
 
 <img src="images/Poster.png" style="display: block; margin: auto;" />
 
-# Acknowledgements {-}
-
-PM and TA were supported by the Czech Science Foundation, project no. P506/10/0716.
+This is an online supplement to the Poster presented at the 2019 EOU conference in Cluj-Napoca, and provides detailed description of methods as well as additional data to review.
 
 

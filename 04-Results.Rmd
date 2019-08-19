@@ -1,3 +1,11 @@
 # Results{#results}
 
-TBA
+
+```{r, echo = FALSE}
+tab <- read.csv("C:/Users/SLi/Documents/GitHub/IndoEuropeanFlyway_Rosefinch/data/GeolocTab.csv")
+
+knitr::kable(
+  tab, booktabs = TRUE,
+  caption = 'Recovered Geolocators'
+)
+```
