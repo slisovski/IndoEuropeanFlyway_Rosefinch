@@ -7,7 +7,7 @@ bookdown::gitbook:
       before: |
         <li><a href="./">Rosefinch Migration</a></li>
       after: |
-        <li><a href="https://github.com/slisovski" target="_blank">github/SLisovski</a></li>
+        <li><a href="https://github.com/slisovski/" target="_blank">github/SLisovski</a></li>
     download: [pdf, epub, mobi]
     edit: https://github.com/slisovski/IndoEuropeanFlyway_Rosefinch/%s
     sharing:

@@ -1,6 +1,0 @@
-
-# Methods {#methods}
-
-## Geolocation
-
-Light-level geolocators were deployed on male Rosefinches in Finland, Sweden, Germany, Czechia and Bulgaria (Table 1). In Finland, geolocators were deployed at different filed sites during 2015 (SOI GDL2 n = x) and 2016 (SOI GDL2 n = x and Migrate Technology Intigeo XX n = x). In Sweden, birds were captured and equipped with geolocators in 2011 (Halland, BAS BAS Mk12S n = 10), 2012 (Gotland, MT Intigeo-P65 n = 4; Halland, MT Intigeo n =  2) and  2013 (Gotland, MT Intigeo-P65 n = 21). In Germany, initial fieldwork took place at one site during 2013 (Margrafenheide, SOI GDL2 n =20). At two sites in Czechia, geolocators were put on Rosefinches in XXX (Migrate Technology Intigeo XX, n = x) and 2013 (SOI GLD2 n = 20). During XXX and at one site, geolocators were put on XX individuals (Migrate Technology Intigeo X, n = x) in 20XX. At all sites, birds were caught at their breeding locations using mist nets. All individuals were individually marked (metal ring and color bands), measured and equipped with a geolocator mounted on a leg-loop harness. Geolocators with the harness weighted between XX and XX g, which represents XX – XX % of the body mass. Thus, we expect no or very minor effects on the individuals behavior and fitness due to the extra weight of the device [Brlík et al. 2019](#brlik_jae_2019).
