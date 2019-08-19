@@ -1,0 +1,5 @@
+book_filename: "Rosefinch Migration"
+chapter_name: "Chapter "
+before_chapter_script: "Common.R"
+output_dir: "docs"
+new_session: yes
