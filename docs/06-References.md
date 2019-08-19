@@ -1,7 +1,13 @@
 
+
 # Acknowledgements
 
-PM and TA were supported by the Czech Science Foundation, project no. P506/10/0716.
+PM and TA were supported by the Czech Science Foundation, project no. P506/10/0716. This work was financially supported by Ministry of Culture of the Czech Republic (DKRVO 2014/17, 2015/18 and DKRVO 2019–2023/6.VIII.d, National Museum, 00023272). 
+
+
+# Ethics 
+Fieldwork was carried out in accordance with the current federal laws. Capturing, handling and geolocator deployment was approved by the german xx (), the animal care and ethics representatives of Ministry of Culture of the Czech Republic (No. 02/2011), xxx
+
 
 # References
 
