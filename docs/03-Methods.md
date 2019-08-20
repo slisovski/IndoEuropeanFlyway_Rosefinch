@@ -70,5 +70,9 @@ with parameters a = 20 and b = 0.3 resulting in zero survival for NDVI = 0 and a
 
 In the next time step (t=1), the individual starts from the grid that provided the highest prosp. survival. Unlike in the previous step, only cells that are in reach and are not yet evaluation during the previous round are considered as potential destinations. The prospective survival for these cells is again based on the NDVI for this timestep, however, multiplied by the prosp. survival of the origin (e.g. the highest prosp. survival of t=0). This process is repeated until all cells have been reached, allowing a path construction from all breeding sites (or vice versa in autumn) to the starting point that indicates the paths with the highest possible prosp. survival for this date.
 
+<div class="figure" style="text-align: center">
+<img src="images/NPPSim.png" alt="Example of the simulation results for one date and one breeding population (CZE). The bakcground colors indicate the maximum NDVI values for each grid cell at this date (2012-09-01). The arrows indicate possible flight bouts. The blue lines are the resulting tracks, based on the possible flight bouts and the maximized prospective survival for each wintering site."  />
+<p class="caption">(\#fig:unnamed-chunk-9)Example of the simulation results for one date and one breeding population (CZE). The bakcground colors indicate the maximum NDVI values for each grid cell at this date (2012-09-01). The arrows indicate possible flight bouts. The blue lines are the resulting tracks, based on the possible flight bouts and the maximized prospective survival for each wintering site.</p>
+</div>
 
 Both models were implemented in [R](#Rdev) (Version 3.5.0).
