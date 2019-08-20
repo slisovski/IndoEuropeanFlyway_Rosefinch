@@ -1,1 +1,8 @@
 base
+sp
+maptools
+rgeos
+rgdal
+raster
+gdtools
+pracma

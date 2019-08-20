@@ -1,10 +1,11 @@
 
 --- 
 title: "Migration ecology of the Indo-European flyway - a case study on Common Rosefinch"
-date: "Last edited on 2019-08-19"
+date: "Last edited on 2019-08-20"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book
+fontsize: 10
 bibliography: [book.bib, packages.bib, journal.bib]
 biblio-style: apalike
 link-citations: yes

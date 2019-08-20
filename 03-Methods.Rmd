@@ -159,10 +159,74 @@ We used a threshold approach [Lisovski et al. 2019](#lisovski_2019) to estimate 
 
 ### Spatial Grid{#spatgrid}
 
+For the simluations on optimal wind selection and optimal resource tracking by migrating songbirds along the Flyway, we used a hexagonal grid, allowing to distribute the nodes roughly equally across the investigated area (0.0° - 89.0° W, 5.0° - 72.0° N).
+
+```{r grid, message=FALSE, warning=FALSE, echo = FALSE, fig.width=7, fig.height=7, fig.cap="Spatial Grid with hexagonal grid-cells sourrounding the same area (e.g. equal distance between mid-points)."}
+library(maptools)
+data("wrld_simpl")
+library(rgeos)
+library(rgdal)
+library(raster)
+
+land <- readOGR("C:/Users/SLi/Documents/GitHub/IndoEuropeanFlyway_Rosefinch/data/map/ne_50m_land/ne_50m_land.shp",verbose = FALSE)
+
+xlim = c(0, 89)
+ylim = c(5, 72)
+# pr <- projMap(xlim, ylim, proj = "+proj=poly +lon_0=40")
+proj = "+proj=poly +lon_0=40"
+
+landC <- gIntersection(land, as(extent(c(xlim, ylim)), "SpatialPolygons"), byid = T)
+# plot(landC)
+
+poly <- as(extent(landC), "SpatialPolygons")
+proj4string(poly) <- proj4string(wrld_simpl)
+xcentre <- round(extent(poly)[1] + diff(extent(poly)[1:2])/2)
+ycentre <- round(extent(poly)[3] + diff(extent(poly)[3:4])/2)
+proj <- sprintf("%s +lon_0=%f +lat_0=%f +ellps=sphere", "+proj=laea", xcentre, ycentre)
+polyP <- spTransform(poly, CRS(proj))
+
+HexPts  <-spsample(polyP, type="hexagonal", cellsize = 150000)
+HexPols <- HexPoints2SpatialPolygons(HexPts)
+
+HexP <- spTransform(HexPols, CRS(proj4string(landC)))
+
+opar <- par(mar = c(2,2,2,2))
+plot(HexP, border = "transparent")
+plot(landC, col = "grey90", border = "grey70", add = T)
+pts <- project(coordinates(HexPts), proj = proj, inv = TRUE)
+# points(pts, pch = 21, bg = adjustcolor("cornflowerblue", alpha.f = 0.5))
+plot(spTransform(HexPols, CRS(proj4string(landC))), add = T)
+par(opar)
+```
+
+We chose five breeding locations representing locations from the five Common Rosefinch populations we tracked to their wintering sites. To keep the simulations simple we choose five locations that roughly represent the spread of the wintering sites of the tracked Rosefinches.
+
+
+```{r sites, message=FALSE, warning=FALSE, echo = FALSE, fig.width=7, fig.height=7, fig.cap="Breeding (cicles) and wintering sites (diamonds) used in the simulations."}
+load("C:/Users/SLi/Documents/GitHub/IndoEuropeanFlyway_Rosefinch/data/map/StartEnd.RData")
+breed   <- stend[[2]]
+winter  <- stend[[1]]
+
+clsPop <- c("#6b85bd", "#dbd4e8", "#e27a49", "#615747", "#45435a")
+
+opar <- par(mar = c(2,2,2,2))
+plot(landC, col = "grey90", border = "grey70")
+points(breed, pch = 23, cex = 2, lwd = 1.5, bg = "black")
+points(winter, pch = 21, cex = 2, bg = clsPop)
+par(opar)
+```
 
 ### Wind
 
-To investigate optimal routes in terms of wind efficiency across all five Rosefinch populations, we followed the general approach established by [Kranstauber et al. (2015)](#kranstauber_2015). In short, our model calculates the fastest route between the breeding locations (five major locations) and four locations across the wintering range, traveling over a grid consisting of 229 cells or nodes (see section [Spatial Grid](#spatgrid)). Travel is allowed along straight connections to the six surrounding cells and the second-order neighbours creating 12 travel connections about 30° apart. The distance to the direct neighbour was on average 150 km, and 300 km respectively. Wind data was provided by the European Centre for Midrange Weather Forecast (ECMWF; https://www.ecmwf.int/). For the interpolation of wind, we used three layers of the atmospheric model, 925, 850 and 700 millibar, which correspond to the median altitude of 779, 1502 and 3130 meters above sea level. These altitudes cover the range where most migration is observed in radar and recent geolocator studies (Kemp et al. 2013, Liechti et al. 2018, Dhanjal-Adams et al. 2018).  The model begins from a starting location and initiates travel to all surrounding nodes. Travel time to the nodes depends on the ground speed (vg) that was calculated as a function of cross wind (wc) wind support (ws) and air speed (10 ms-1). For each time step of 3 hours, the wind conditions from the altitude with the best supporting winds (or least crosswind) was chosen, assuming that birds regularly change altitude during flight (Liechti et al. 2018). This process continues and reiterates until the destination is reached. This algorithm finds the shortest route in our hexagonal grid from the starting point to all locations on the grid. The distances in the grid are determined by travel time calculated using the speed function described in Kranstauber et al. (2015). We calculated the optimal route from all five wintering locations to all five breeding locations, and vice-versa, starting every 5th day between 1 April and 31 May in spring and 1 August and 31 September in autumn across 2012 to 2017. This resulted in 60 routes per population and year. To weight routes, we used the same approach described by [Kranstauber et al. (2015)](#kranstauber_2015), namely, to calculate travel time throughout the study period at the same starting date over the optimal routes. We than assume that travel time (t) has a sigmoidal relation with mortality and calculated an average survival per year for each route using the travel time across all years:
+To investigate optimal routes in terms of wind efficiency across all five Rosefinch populations, we followed the general approach established by [Kranstauber et al. (2015)](#kranstauber_2015). In short, our model calculates the fastest route between the breeding locations (five major locations) and four locations across the wintering range, traveling over a grid consisting of 229 cells or nodes (see section [Spatial Grid](#spatgrid)). Travel is allowed along straight connections to the six surrounding cells and the second-order neighbours creating 12 travel connections about 30° apart. The distance to the direct neighbour was on average 150 km, and 300 km respectively. Wind data was provided by the European Centre for Midrange Weather Forecast (ECMWF; https://www.ecmwf.int/). For the interpolation of wind, we used three layers of the atmospheric model, 925, 850 and 700 millibar, which correspond to the median altitude of 779, 1502 and 3130 meters above sea level. These altitudes cover the range where most migration is observed in radar and recent geolocator studies (Kemp et al. 2013, Liechti et al. 2018, Dhanjal-Adams et al. 2018).  The model begins from a starting location and initiates travel to all surrounding nodes. Travel time to the nodes depends on the ground speed (vg) that was calculated as a function of cross wind (wc) wind support (ws) and air speed (10 ms-1). For each time step of 3 hours, the wind conditions from the altitude with the best supporting winds (or least crosswind) was chosen, assuming that birds regularly change altitude during flight (Liechti et al. 2018). This process continues and reiterates until the destination is reached. 
+
+```{r fig.align='center', echo=FALSE, size = "tiny", fig.cap="A visualisation of the algorithm that finds the optimal route. Travel starts at the grey node in all directions without intended destination. Wind is indicated by the arrow at the blue points. The air speed of the bird in each direction is kept constant at 10 m s?1. The realised ground speed indicated by the black circle, however, is influenced by wind speed and direction which are interpolated bi-linearly to all nodes. When a node has been reached (solid circles), the travel continues from there iterating the calculations by travelling to all surrounding nodes that have not yet been reached. Inclusion of the influence of wind on the ground speed results in the optimal routes (thick lines) to many nodes actually not being the direct connection. This algorithm is repeated until all locations are reached thus providing the quickest route to all location on the grid. Figure adopted from [Kranstauber et al. (2015)](#kranstauber_2015)."}
+knitr::include_graphics('images/KranstauberFIG.png', dpi = NA)
+```
+
+
+
+This algorithm finds the shortest route in our hexagonal grid from the starting point to all locations on the grid. The distances in the grid are determined by travel time calculated using the speed function described in Kranstauber et al. (2015). We calculated the optimal route from all five wintering locations to all five breeding locations, and vice-versa, starting every 5th day between 1 April and 31 May in spring and 1 August and 31 September in autumn across 2012 to 2017. This resulted in 60 routes per population and year. To weight routes, we used the same approach described by [Kranstauber et al. (2015)](#kranstauber_2015), namely, to calculate travel time throughout the study period at the same starting date over the optimal routes. We than assume that travel time (t) has a sigmoidal relation with mortality and calculated an average survival per year for each route using the travel time across all years:
 
 $$\phi_{Wind} = 1 - \frac{t^2}{\lambda - t^2}$$
 
@@ -171,11 +235,23 @@ Where $\lambda$, the migration mortality is set to the mean travel time across a
 
 ### Resources
 
-To investigate routes that provide some level of resources along the way and optimise prospective survival, we used a similar procedure as described for the wind simulation with normalized differenced vegetation indices (NDVI) as the underlying environmental variable. NDVI values differ between 0 and 1 and indicate levels of photosynthetic activity. It has been shown that this correlates well with primary productivity and to some extent higher trophic level productivity [Pettorelli et al. 2005](#petorelli_2005). Many terrestrial migratory birds including Common Rosefinches, mainly fly during the night and rest during the day (). Furthermore, they cannot cover the entire distance without extended (>1 day) stopping periods during which they replenish their fuel loads. For this, they need to stop at suitable locations. We here assume, that individual birds can fly approximately 10 hours per day with have an average ground speed of 15 meters per second (). Thus, they can travel up to 540 km per day. During the migration periods simulation started on the same days as described in the wind simulation. For each wintering site in spring, breeding site in autumn and for all dates, an individual Rosefinch starts (t=0) by calculating the prospective survival for all sites that are in reach during the next nights flight period (sites <= 550 km away). The prospective survival was based in the NDVI value for the grid cell following a sigmoidal relation:
+To investigate routes that provide some level of resources along the way and optimise prospective survival, we used a similar procedure as described for the wind simulation with normalized differenced vegetation indices (NDVI) as the underlying environmental variable. Weekly NDVI layers with a 4 km resolution were downloaded from NOAA (https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/vh_ftp.php). NDVI values differ between 0 and 1 and indicate levels of photosynthetic activity. It has been shown that this correlates well with primary productivity and to some extent higher trophic level productivity [Pettorelli et al. 2005](#petorelli_2005). Many terrestrial migratory birds including Common Rosefinches, mainly fly during the night and rest during the day (). Furthermore, they cannot cover the entire distance without extended (>1 day) stopping periods during which they replenish their fuel loads. For this, they need to stop at suitable locations. We here assume, that individual birds can fly approximately 10 hours per day with have an average ground speed of 15 meters per second (). Thus, they can travel up to 540 km per day. During the migration periods simulation started on the same days as described in the wind simulation. For each wintering site in spring, breeding site in autumn and for all dates, an individual Rosefinch starts (t=0) by calculating the prospective survival for all sites that are in reach during the next nights flight period (sites <= 550 km away). The prospective survival was based in the NDVI value for the grid cell following a sigmoidal relation:
 
 $$\phi_{NDVI} = \frac{1}{1 - e^{a-(x-b)}}$$
 
-with parameters a = 20 and b = 0.3 resulting in zero survival for NDVI = 0 and a survival of 0.5 for NDVI = 0.3. In the next time step (t=1), the individual starts from the grid that provided the highest prosp. survival. Unlike in the previous step, only cells that are in reach and are not yet evaluation during the previous round are considered as potential destinations. The prospective survival for these cells is again based on the NDVI for this timestep, however, multiplied by the prosp. survival of the origin (e.g. the highest prosp. survival of t=0). This process is repeated until all cells have been reached, allowing a path construction from all breeding sites (or vice versa in autumn) to the starting point that indicates the paths with the highest possible prosp. survival for this date.
+with parameters a = 20 and b = 0.3 resulting in zero survival for NDVI = 0 and a survival of 0.5 for NDVI = 0.3. 
+
+```{r survival, echo = FALSE, fig.cap="Relationship between prospective survival and NDVI values used in the simulations."}
+library(pracma)
+npp  <- seq(0, 1, length.out = 101)
+survY <- sigmoid(npp, a = 20, b = 0.3)
+opar <- par(las = 1, mar = c(7,7,3,3), cex.lab = 2, cex.axis = 1.4, mgp = c(4,1.5,0))
+plot(npp, survY, type = "l", col = "darkblue", 
+     xlab = "Prospective Survival", ylab = "NDVI", xlim = c(0,1), ylim = c(0,1), lwd = 3)
+par(opar)
+```
+
+In the next time step (t=1), the individual starts from the grid that provided the highest prosp. survival. Unlike in the previous step, only cells that are in reach and are not yet evaluation during the previous round are considered as potential destinations. The prospective survival for these cells is again based on the NDVI for this timestep, however, multiplied by the prosp. survival of the origin (e.g. the highest prosp. survival of t=0). This process is repeated until all cells have been reached, allowing a path construction from all breeding sites (or vice versa in autumn) to the starting point that indicates the paths with the highest possible prosp. survival for this date.
 
 
 Both models were implemented in [R](#Rdev) (Version 3.5.0).
